@@ -141,7 +141,8 @@ class Board:
             return True
         return False
 
-    def minmax()
+    def minmax(self, ):
+
 
 
 
