@@ -1,7 +1,6 @@
 # 0 = blank
 # 1 = red
 # 2 = yellow
-
 # Defines Board object
 class Board:
     # Instantiates & defines variables turn & grid.
@@ -38,7 +37,7 @@ class Board:
     def updateGrid(self, grid):
         # updates Board grid
         self.grid = grid
-        self.turn = 3-(self.turn) # Flips turns: 1 = 2, 2 = 1.
+        self.turn = 3-(self.turn) # Flips turns: 1 = 2, 2 = 1.        
         return self
 
     # displays Board grid
@@ -99,7 +98,6 @@ class Board:
             else:
                 rowCount = 0
 
-
         # Check upward diagonal win
         """diffCof = max(x, y) - min(x, y)
         startingPoint = (x - diffCof, y - diffCof)"""
@@ -140,11 +138,67 @@ class Board:
             print("The game is. ..a draw!")
             return True
         return False
+           
+    def getLegalMoves(board):
+        # 1 if legal, 0 if not
+        return [count + 1 for count, x in enumerate(board.grid[5]) if (x!=1 or x!=2)]
+        
+    
+    
+    def minmax(board, depth, is_max, lastPos):
+        
+        if depth == 0 or board.checkWin(lastPos):
+            return # heuristic value of the node
 
-    def minmax(self, ):
+        #maximizing player
+        
+        
+        
+        value = -float("∞")
+            
 
+        legalMoves = Board.getLegalMoves()
+        if all(legalMoves) or depth >= 3:
+            #return heuristic
+            return 0
+            
+            
+        values = []
+        for move in legalMoves:
+            #create a new board object with the new move
+            newBoard = board.placeToken(move)
+            #values = [(value, move)]
+            values.append((is_max * Board.minmax(newBoard, depth-1, is_max * -1, move),move))
+        
 
-
+        
+        return is_max * max(values)
+        
+          
+      	# value = unknown
+    	# 	if is_max:
+        #   value = minmax(child, False)
+        # else:
+        #   value = minmax(child, True)
+        # return value
+    
+      
+'''
+function minmax(node, depth, maximizingPlayer) is
+    if depth = 0 or node is a terminal node then
+        return the heuristic value of node
+    if maximizingPlayer then
+        value := −∞
+        for each child of node do
+            value := max(value, minmax(child, depth − 1, FALSE))
+        return value
+    else (* minimizing player *)
+        value := +∞
+        for each child of node do
+            value := min(value, minmax(child, depth − 1, TRUE))
+        return value
+'''
+          
 
 # Board object
 board = Board()
@@ -152,6 +206,23 @@ board = Board()
 # adding tokens
 
 
+while(checkWin == False):
+	
+  turnFunc = 1
+  print(f"Player {turnFunc}s turn")
+  board.display()
+  print("type  a number from 1-7")
+  choice = int(input())
+  board.updateGrid(board.placeToken(choice))
+  if(turnFunc ==1):
+  	turnFunc = 2
+else:
+  	turnFunc = 1
+  
+  
+
+
+'''
 board.updateGrid(board.placeToken(1))
 board.updateGrid(board.placeToken(2))
 board.updateGrid(board.placeToken(2))
@@ -159,7 +230,7 @@ board.updateGrid(board.placeToken(3))
 board.updateGrid(board.placeToken(4))
 board.updateGrid(board.placeToken(4))
 board.updateGrid(board.placeToken(4))
-board.updateGrid(board.placeToken(4))
+board.updateGrid(board.placeToken(4)) 
 board.updateGrid(board.placeToken(6))
 board.updateGrid(board.placeToken(5))
 board.updateGrid(board.placeToken(5))
@@ -167,6 +238,7 @@ board.updateGrid(board.placeToken(3))
 board.updateGrid(board.placeToken(3))
 board.updateGrid(board.placeToken(1))
 board.updateGrid(board.placeToken(3))
+'''
 
 # win test checks
 print(f"Win: {board.checkWin(4)}")
@@ -176,12 +248,12 @@ print(f"Win: {board.checkWin(5)}") # needs to be passed correct token position t
 board.display()
 
 
-#how to run
 #python3 main.py"""
 #0 = blank
 #1 = red
 #2 = yellow
 
+#negamax
 
 #how to run
 #python3 main.py"""
