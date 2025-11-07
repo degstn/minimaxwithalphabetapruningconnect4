@@ -139,12 +139,21 @@ class Board:
             return True
         return False
            
-    def getLegalMoves(board):
-        # 1 if legal, 0 if not
-        return [count + 1 for count, x in enumerate(board.grid[5]) if (x!=1 or x!=2)]
-        
+    def getLegalMoves(self):
+        return [c + 1 for c in range(7) if self.grid[5][c] == 0]
     
+    def evaluate(self):
+        score = 0
+        # simple heuristic: count total tokens
+        for row in self.grid:
+            for cell in row:
+                if cell == 2:  # AI
+                    score += 1
+                elif cell == 1:  # Human
+                    score -= 1
+        return score
     
+    '''
     def minmax(board, depth, is_max, lastPos):
         
         if depth == 0 or board.checkWin(lastPos):
@@ -173,7 +182,7 @@ class Board:
 
         
         return is_max * max(values)
-        
+        '''
           
       	# value = unknown
     	# 	if is_max:
@@ -181,6 +190,42 @@ class Board:
         # else:
         #   value = minmax(child, True)
         # return value
+
+    def minimax(self, depth, maximizing, lastMove):
+    # Base case: win, full board, or depth limit
+        if self.checkWin(lastMove) or self.is_full() or depth == 0:
+            return self.evaluate(), None
+
+        legalMoves = self.getLegalMoves()
+
+        if maximizing:
+            maxEval = float('-inf')
+            bestMove = None
+            for move in legalMoves:
+                # simulate move
+                newBoard = Board()
+                newBoard.grid = [row[:] for row in self.grid]  # deep copy
+                newBoard.turn = self.turn
+                newBoard.updateGrid(newBoard.placeToken(move))
+                eval, _ = newBoard.minimax(depth - 1, False, move)
+                if eval > maxEval:
+                    maxEval = eval
+                    bestMove = move
+            return maxEval, bestMove
+
+        else:
+            minEval = float('inf')
+            bestMove = None
+            for move in legalMoves:
+                newBoard = Board()
+                newBoard.grid = [row[:] for row in self.grid]  # deep copy
+                newBoard.turn = self.turn
+                newBoard.updateGrid(newBoard.placeToken(move))
+                eval, _ = newBoard.minimax(depth - 1, True, move)
+                if eval < minEval:
+                    minEval = eval
+                    bestMove = move
+            return minEval, bestMove
     
       
 '''
@@ -206,18 +251,25 @@ board = Board()
 # adding tokens
 
 
-while(checkWin == False):
-	
-  turnFunc = 1
-  print(f"Player {turnFunc}s turn")
-  board.display()
-  print("type  a number from 1-7")
-  choice = int(input())
-  board.updateGrid(board.placeToken(choice))
-  if(turnFunc ==1):
-  	turnFunc = 2
-else:
-  	turnFunc = 1
+while True:
+    board.display()
+    if board.turn == 1:  # Human
+        move = int(input("Your move (1–7): "))
+    else:  # AI
+        print("AI thinking...")
+        _, move = board.minimax(depth=3, maximizing=True, lastMove=move if 'move' in locals() else 1)
+        print(f"AI chooses column {move}")
+
+    board.updateGrid(board.placeToken(move))
+
+    if board.checkWin(move):
+        board.display()
+        print(f"Player {board.turn % 2 + 1} wins!")
+        break
+
+    if board.is_full():
+        print("It's a tie!")
+        break
   
   
 
